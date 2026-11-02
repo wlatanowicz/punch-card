@@ -1,0 +1,78 @@
+SHELL := /bin/bash
+
+.PHONY: help docker-start migrate make-migrations check test test-be test-be-ci lint-be test-shared test-fe test-mobile typecheck typecheck-fe typecheck-mobile run-mobile
+
+# Ephemeral Postgres for `make test-be` (avoid colliding with a local dev DB)
+TEST_DB_PORT ?= 5433
+TEST_DB_PASSWORD ?= postgres
+
+.DEFAULT_GOAL := help
+
+help: ## Print help
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+
+docker-start: ## Start Docker Compose stack (foreground)
+	docker compose up --build
+
+migrate: ## Apply Alembic migrations inside running backend container
+	docker compose exec backend uv run alembic upgrade head
+
+make-migrations: ## Autogenerate Alembic revision inside running backend container
+	docker compose exec backend uv run alembic revision --autogenerate
+
+test-be: ## Run backend tests with ephemeral Postgres (Docker; migrations run inside pytest)
+	set -euo pipefail; \
+	docker rm -f punch-card-test-db 2>/dev/null || true; \
+	docker run -d --rm --name punch-card-test-db -p $(TEST_DB_PORT):5432 \
+	  -e POSTGRES_PASSWORD=$(TEST_DB_PASSWORD) postgres:18; \
+	trap 'docker kill punch-card-test-db 2>/dev/null || true' EXIT; \
+	for _ in $$(seq 1 60); do \
+	  docker exec punch-card-test-db pg_isready -U postgres >/dev/null 2>&1 && break; \
+	  sleep 0.5; \
+	done; \
+	docker exec punch-card-test-db pg_isready -U postgres >/dev/null; \
+	export DATABASE_URL=postgresql://postgres:$(TEST_DB_PASSWORD)@127.0.0.1:$(TEST_DB_PORT)/postgres; \
+	export SYNC_TEST_DB_URL="$$DATABASE_URL"; \
+	export JWT_SECRET=test-jwt-secret-key-at-least-thirty-two-chars-for-local-and-ci; \
+	cd backend && uv run pytest
+
+test-be-ci: ## Run backend tests using DATABASE_URL from the environment (migrations run inside pytest)
+	set -euo pipefail; \
+	if [ -z "$$DATABASE_URL" ]; then echo "DATABASE_URL is required"; exit 1; fi; \
+	export SYNC_TEST_DB_URL="$$DATABASE_URL"; \
+	export JWT_SECRET=$${JWT_SECRET:-test-jwt-secret-key-at-least-thirty-two-chars-for-local-and-ci}; \
+	cd backend && uv run pytest
+
+lint-be: ## Run Ruff on backend Python tree
+	cd backend && uv run ruff check src tests conftest.py
+
+test-shared: ## Run shared TypeScript package tests
+	npm test --workspace=@micro-saas/api-client
+
+test-fe: ## Run web frontend unit tests
+	npm test --workspace=punch-card-frontend
+
+test-mobile: ## Run Expo unit tests
+	npm test --workspace=mobile
+
+typecheck-fe: ## Typecheck the web frontend
+	npm run typecheck --workspace=punch-card-frontend
+
+typecheck-mobile: ## Typecheck the Expo app
+	npm run typecheck --workspace=mobile
+
+typecheck: typecheck-fe typecheck-mobile ## Typecheck TypeScript clients
+
+run-mobile: ## Start the Expo dev server with local Expo MCP
+	EXPO_UNSTABLE_MCP_SERVER=1 npm start --workspace=mobile
+
+test: test-be test-shared test-fe test-mobile ## Run automated tests (backend, shared packages, and clients)
+
+check: ## Run tests, typechecks, Ruff, and Lambda requirements export (CI parity subset)
+	$(MAKE) test-be
+	$(MAKE) lint-be
+	$(MAKE) test-shared
+	$(MAKE) test-fe
+	$(MAKE) test-mobile
+	$(MAKE) typecheck
+	cd backend && uv export --frozen --no-dev --no-emit-project --no-hashes -o requirements-lambda.txt

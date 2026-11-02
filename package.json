@@ -1,0 +1,9 @@
+{
+  "name": "punch-card",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "mobile",
+    "packages/*"
+  ]
+}
