@@ -85,6 +85,22 @@
       "thisEmail": "this email"
     }
   },
+  "tabs": {
+    "cards": "Cards",
+    "stamp": "Stamp",
+    "settings": "Settings"
+  },
+  "cards": {
+    "title": "Cards",
+    "empty": "No loyalty cards yet."
+  },
+  "stamp": {
+    "title": "Stamp QR",
+    "empty": "Your stamp code will show up here."
+  },
+  "settings": {
+    "title": "Settings"
+  },
   "language": {
     "label": "Language",
     "en": "English",
