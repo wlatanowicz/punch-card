@@ -92,7 +92,14 @@
   },
   "cards": {
     "title": "Cards",
-    "empty": "No loyalty cards yet."
+    "empty": "No loyalty cards yet.",
+    "back": "Back",
+    "delete": "Delete card",
+    "symbology": "Code type",
+    "payload": "Code",
+    "places": "Places",
+    "usedHere": "Used here",
+    "notFound": "This card is no longer on this device."
   },
   "stamp": {
     "title": "Stamp QR",

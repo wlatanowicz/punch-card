@@ -37,17 +37,20 @@ export function AppButton({
   disabled,
   loading,
   variant = "filled",
+  testID,
 }: {
   label: string;
   onPress: () => void;
   disabled?: boolean;
   loading?: boolean;
   variant?: ButtonVariant;
+  testID?: string;
 }) {
   const theme = useAppTheme();
   const palette = buttonPalette(theme, variant);
   return (
     <Pressable
+      testID={testID}
       accessibilityRole="button"
       onPress={onPress}
       disabled={disabled || loading}

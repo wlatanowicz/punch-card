@@ -92,7 +92,14 @@
   },
   "cards": {
     "title": "Karty",
-    "empty": "Nie ma jeszcze kart lojalnościowych."
+    "empty": "Nie ma jeszcze kart lojalnościowych.",
+    "back": "Wstecz",
+    "delete": "Usuń kartę",
+    "symbology": "Typ kodu",
+    "payload": "Kod",
+    "places": "Miejsca",
+    "usedHere": "Użyto tutaj",
+    "notFound": "Tej karty nie ma już na tym urządzeniu."
   },
   "stamp": {
     "title": "Kod QR pieczątki",
