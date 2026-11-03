@@ -2,13 +2,14 @@ import { useTranslation } from "react-i18next";
 import { Text, useWindowDimensions, View } from "react-native";
 import { SvgXml } from "react-native-svg";
 
-import { renderCardCode } from "./cardCode";
+import { cardCodeSize, renderCardCode } from "./cardCode";
 
 const SCREEN_GUTTER = 32;
+const CHROME_HEIGHT = 220;
 
 export function CardCodeView({ symbology, payload }: { symbology: string; payload: string }) {
   const { t } = useTranslation();
-  const { width } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
   const code = renderCardCode(symbology, payload);
 
   if (!code.ok) {
@@ -23,24 +24,20 @@ export function CardCodeView({ symbology, payload }: { symbology: string; payloa
     );
   }
 
-  const size = cardCodeSize(code.svg, Math.max(width - SCREEN_GUTTER, 1));
+  const size = cardCodeSize(
+    code.svg,
+    Math.max(width - SCREEN_GUTTER, 1),
+    Math.max(height - CHROME_HEIGHT, 1),
+  );
   return (
     <View
       testID="card-code"
+      accessible
+      accessibilityRole="image"
       accessibilityLabel={payload}
-      style={{ alignItems: "center", backgroundColor: "#FFFFFF" }}
+      style={{ alignItems: "center", alignSelf: "center", backgroundColor: "#FFFFFF" }}
     >
       <SvgXml xml={code.svg} width={size.width} height={size.height} />
     </View>
   );
-}
-
-function cardCodeSize(svg: string, maxWidth: number): { width: number; height: number } {
-  const match = /viewBox="0 0 ([0-9.]+) ([0-9.]+)"/.exec(svg);
-  const viewWidth = match ? Number(match[1]) : maxWidth;
-  const viewHeight = match ? Number(match[2]) : maxWidth;
-  if (viewWidth <= 0 || viewHeight <= 0) {
-    return { width: maxWidth, height: maxWidth };
-  }
-  return { width: maxWidth, height: (viewHeight / viewWidth) * maxWidth };
 }

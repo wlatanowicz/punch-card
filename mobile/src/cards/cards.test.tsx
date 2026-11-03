@@ -93,7 +93,8 @@ describe("loyalty cards on device", () => {
 
     expect(await view.findByTestId("card-detail")).toBeTruthy();
     expect(view.getByText("Corner Cafe")).toBeTruthy();
-    expect(view.getByTestId("card-code")).toBeTruthy();
+    expect(view.getByTestId("card-code").props.accessible).toBe(true);
+    expect(view.getByTestId("card-code").props.accessibilityLabel).toBe("cafe-1");
     expect(view.queryByTestId("card-payload")).toBeNull();
     expect(view.getByText("Market")).toBeTruthy();
     expect(view.getByText("Used here")).toBeTruthy();

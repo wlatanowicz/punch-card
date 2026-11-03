@@ -10,6 +10,30 @@ type StoredSymbology = keyof typeof BARCODE_IDS;
 
 export type RenderedCardCode = { ok: true; svg: string } | { ok: false };
 
+export function cardCodeSize(
+  svg: string,
+  maxWidth: number,
+  maxHeight: number,
+): { width: number; height: number } {
+  const bounds = viewBoxSize(svg);
+  const width = bounds?.width ?? maxWidth;
+  const height = bounds?.height ?? maxHeight;
+  if (width <= 0 || height <= 0 || maxWidth <= 0 || maxHeight <= 0) {
+    const side = Math.max(Math.min(maxWidth, maxHeight), 1);
+    return { width: side, height: side };
+  }
+  const scale = Math.min(maxWidth / width, maxHeight / height);
+  return { width: width * scale, height: height * scale };
+}
+
+function viewBoxSize(svg: string): { width: number; height: number } | null {
+  const match = /viewBox="0 0 ([0-9.]+) ([0-9.]+)"/.exec(svg);
+  if (!match) {
+    return null;
+  }
+  return { width: Number(match[1]), height: Number(match[2]) };
+}
+
 export function renderCardCode(symbology: string, payload: string): RenderedCardCode {
   if (!isStoredSymbology(symbology)) {
     return { ok: false };
