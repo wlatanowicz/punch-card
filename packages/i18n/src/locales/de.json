@@ -85,6 +85,22 @@
       "thisEmail": "diese E-Mail"
     }
   },
+  "tabs": {
+    "cards": "Karten",
+    "stamp": "Stempel",
+    "settings": "Einstellungen"
+  },
+  "cards": {
+    "title": "Karten",
+    "empty": "Noch keine Treuekarten."
+  },
+  "stamp": {
+    "title": "Stempel-QR",
+    "empty": "Dein Stempelcode erscheint hier."
+  },
+  "settings": {
+    "title": "Einstellungen"
+  },
   "language": {
     "label": "Sprache",
     "en": "Englisch",

@@ -85,6 +85,22 @@
       "thisEmail": "ten email"
     }
   },
+  "tabs": {
+    "cards": "Karty",
+    "stamp": "Pieczątka",
+    "settings": "Ustawienia"
+  },
+  "cards": {
+    "title": "Karty",
+    "empty": "Nie ma jeszcze kart lojalnościowych."
+  },
+  "stamp": {
+    "title": "Kod QR pieczątki",
+    "empty": "Twój kod pieczątki pojawi się tutaj."
+  },
+  "settings": {
+    "title": "Ustawienia"
+  },
   "language": {
     "label": "Język",
     "en": "Angielski",
