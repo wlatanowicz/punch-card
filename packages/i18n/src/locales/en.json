@@ -97,6 +97,7 @@
     "delete": "Delete card",
     "symbology": "Code type",
     "payload": "Code",
+    "renderError": "This code cannot be displayed.",
     "places": "Places",
     "usedHere": "Used here",
     "notFound": "This card is no longer on this device."
