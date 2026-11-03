@@ -108,7 +108,8 @@
     "permissionDenied": "Camera access is off. Punch Card needs the camera to read a loyalty card.",
     "nameTitle": "Name this card",
     "nameLabel": "Card name",
-    "save": "Save card"
+    "save": "Save card",
+    "saveError": "The card could not be saved. Try again."
   },
   "stamp": {
     "title": "Stamp QR",

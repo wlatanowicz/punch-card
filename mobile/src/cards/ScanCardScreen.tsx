@@ -6,7 +6,7 @@ import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAppTheme } from "../theme";
-import { AppButton, Field } from "../ui";
+import { AppButton, ErrorBanner, Field } from "../ui";
 import { addCard } from "./loyaltyCards";
 
 const SCANNABLE_SYMBOLOGIES = ["qr", "code128", "ean13"] as const;
@@ -29,8 +29,10 @@ export function ScanCardScreen() {
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState<ScannedCode | null>(null);
   const [name, setName] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const acceptScan = useRef(true);
-  const saving = useRef(false);
+  const savingRef = useRef(false);
 
   function leave() {
     if (router.canGoBack()) {
@@ -52,24 +54,35 @@ export function ScanCardScreen() {
   }
 
   function rescan() {
+    if (savingRef.current) {
+      return;
+    }
     acceptScan.current = true;
-    saving.current = false;
     setScanned(null);
     setName("");
+    setSaveError(null);
   }
 
   async function save() {
     const trimmed = name.trim();
-    if (!scanned || trimmed.length === 0 || saving.current) {
+    if (!scanned || trimmed.length === 0 || savingRef.current) {
       return;
     }
-    saving.current = true;
-    await addCard({
-      name: trimmed,
-      symbology: scanned.symbology,
-      payload: scanned.payload,
-    });
-    router.replace("/");
+    savingRef.current = true;
+    setSaving(true);
+    setSaveError(null);
+    try {
+      await addCard({
+        name: trimmed,
+        symbology: scanned.symbology,
+        payload: scanned.payload,
+      });
+      router.replace("/");
+    } catch {
+      savingRef.current = false;
+      setSaving(false);
+      setSaveError(t("cards.saveError"));
+    }
   }
 
   if (scanned) {
@@ -80,21 +93,29 @@ export function ScanCardScreen() {
         style={{ flex: 1, backgroundColor: theme.bg }}
       >
         <View style={{ padding: theme.pad, gap: 12 }}>
-          <AppButton label={t("cards.back")} onPress={rescan} variant="subtle" testID="scan-back" />
+          <AppButton
+            label={t("cards.back")}
+            onPress={rescan}
+            variant="subtle"
+            disabled={saving}
+            testID="scan-back"
+          />
           <Text style={{ color: theme.text, fontSize: 28, fontWeight: "700" }}>{t("cards.nameTitle")}</Text>
           <Field
             label={t("cards.nameLabel")}
+            accessibilityLabel={t("cards.nameLabel")}
             value={name}
             onChangeText={setName}
             testID="scan-name"
             autoFocus
           />
+          {saveError ? <ErrorBanner message={saveError} /> : null}
           <AppButton
             label={t("cards.save")}
             onPress={() => {
               void save();
             }}
-            disabled={name.trim().length === 0}
+            disabled={name.trim().length === 0 || saving}
             testID="scan-save"
           />
         </View>
@@ -103,7 +124,8 @@ export function ScanCardScreen() {
   }
 
   if (!permission?.granted) {
-    const deniedForGood = permission !== null && !permission.canAskAgain;
+    const denied = permission?.status === "denied";
+    const canAsk = permission == null || permission.canAskAgain;
     return (
       <SafeAreaView
         testID="scan-screen"
@@ -112,22 +134,21 @@ export function ScanCardScreen() {
       >
         <View style={{ padding: theme.pad, gap: 12 }}>
           <AppButton label={t("cards.back")} onPress={leave} variant="subtle" testID="scan-back" />
-          {deniedForGood ? (
-            <Text testID="scan-permission-denied" style={{ color: theme.text, fontSize: 16 }}>
-              {t("cards.permissionDenied")}
-            </Text>
-          ) : (
-            <>
-              <Text style={{ color: theme.text, fontSize: 16 }}>{t("cards.cameraNeeded")}</Text>
-              <AppButton
-                label={t("cards.allowCamera")}
-                onPress={() => {
-                  void requestPermission();
-                }}
-                testID="scan-allow"
-              />
-            </>
-          )}
+          <Text
+            testID={denied ? "scan-permission-denied" : "scan-camera-needed"}
+            style={{ color: theme.text, fontSize: 16 }}
+          >
+            {denied ? t("cards.permissionDenied") : t("cards.cameraNeeded")}
+          </Text>
+          {canAsk ? (
+            <AppButton
+              label={t("cards.allowCamera")}
+              onPress={() => {
+                void requestPermission();
+              }}
+              testID="scan-allow"
+            />
+          ) : null}
         </View>
       </SafeAreaView>
     );

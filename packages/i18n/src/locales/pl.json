@@ -108,7 +108,8 @@
     "permissionDenied": "Dostęp do aparatu jest wyłączony. Punch Card potrzebuje aparatu, aby odczytać kartę lojalnościową.",
     "nameTitle": "Nazwij tę kartę",
     "nameLabel": "Nazwa karty",
-    "save": "Zapisz kartę"
+    "save": "Zapisz kartę",
+    "saveError": "Nie udało się zapisać karty. Spróbuj ponownie."
   },
   "stamp": {
     "title": "Kod QR pieczątki",

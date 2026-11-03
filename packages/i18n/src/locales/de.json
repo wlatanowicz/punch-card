@@ -108,7 +108,8 @@
     "permissionDenied": "Kamerazugriff ist aus. Punch Card braucht die Kamera, um eine Treuekarte zu lesen.",
     "nameTitle": "Diese Karte benennen",
     "nameLabel": "Kartenname",
-    "save": "Karte speichern"
+    "save": "Karte speichern",
+    "saveError": "Die Karte konnte nicht gespeichert werden. Versuche es erneut."
   },
   "stamp": {
     "title": "Stempel-QR",
