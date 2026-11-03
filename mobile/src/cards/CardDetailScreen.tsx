@@ -35,9 +35,17 @@ export function CardDetailScreen({ cardId }: { cardId: string }) {
     };
   }, [cardId]);
 
+  function leaveCard() {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace("/");
+    }
+  }
+
   async function removeCard() {
     await deleteCard(cardId);
-    router.back();
+    leaveCard();
   }
 
   return (
@@ -49,7 +57,7 @@ export function CardDetailScreen({ cardId }: { cardId: string }) {
       <ScrollView contentContainerStyle={{ padding: theme.pad, gap: 12 }}>
         <AppButton
           label={t("cards.back")}
-          onPress={() => router.back()}
+          onPress={leaveCard}
           variant="subtle"
           testID="card-back"
         />

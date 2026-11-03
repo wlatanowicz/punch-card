@@ -60,6 +60,25 @@ describe("loyalty card store", () => {
     jest.restoreAllMocks();
   });
 
+  it("keeps every card when adds overlap", async () => {
+    const [first, second] = await Promise.all([
+      addCard({ name: "First", symbology: "qr", payload: "1" }),
+      addCard({ name: "Second", symbology: "code128", payload: "2" }),
+    ]);
+
+    const listed = await listCards();
+    expect(listed.map((card) => card.id).sort()).toEqual([first.id, second.id].sort());
+  });
+
+  it("drops every card when deletes overlap", async () => {
+    const first = await addCard({ name: "First", symbology: "qr", payload: "1" });
+    const second = await addCard({ name: "Second", symbology: "ean13", payload: "2" });
+
+    await Promise.all([deleteCard(first.id), deleteCard(second.id)]);
+
+    await expect(listCards()).resolves.toEqual([]);
+  });
+
   it("reloads saved cards after the module is imported again", async () => {
     const created = await addCard({
       name: "Corner Cafe",

@@ -4,19 +4,32 @@ import type { LoyaltyCard, LoyaltyCardPlace, LoyaltyCardPlaceInput, NewLoyaltyCa
 
 const STORAGE_KEY = "loyalty_cards";
 
-export async function addCard(input: NewLoyaltyCard): Promise<LoyaltyCard> {
-  const cards = await readCards();
-  const card: LoyaltyCard = {
-    id: crypto.randomUUID(),
-    name: input.name,
-    symbology: input.symbology,
-    payload: input.payload,
-    places: (input.places ?? []).map(storedPlace),
-    updatedAt: new Date().toISOString(),
-  };
-  cards.push(card);
-  await writeCards(cards);
-  return card;
+let mutationQueue: Promise<unknown> = Promise.resolve();
+
+function enqueue<T>(operation: () => Promise<T>): Promise<T> {
+  const result = mutationQueue.then(operation, operation);
+  mutationQueue = result.then(
+    () => undefined,
+    () => undefined,
+  );
+  return result;
+}
+
+export function addCard(input: NewLoyaltyCard): Promise<LoyaltyCard> {
+  return enqueue(async () => {
+    const cards = await readCards();
+    const card: LoyaltyCard = {
+      id: crypto.randomUUID(),
+      name: input.name,
+      symbology: input.symbology,
+      payload: input.payload,
+      places: (input.places ?? []).map(storedPlace),
+      updatedAt: new Date().toISOString(),
+    };
+    cards.push(card);
+    await writeCards(cards);
+    return card;
+  });
 }
 
 export async function listCards(): Promise<LoyaltyCard[]> {
@@ -29,9 +42,11 @@ export async function getCard(id: string): Promise<LoyaltyCard | null> {
   return cards.find((card) => card.id === id) ?? null;
 }
 
-export async function deleteCard(id: string): Promise<void> {
-  const cards = await readCards();
-  await writeCards(cards.filter((card) => card.id !== id));
+export function deleteCard(id: string): Promise<void> {
+  return enqueue(async () => {
+    const cards = await readCards();
+    await writeCards(cards.filter((card) => card.id !== id));
+  });
 }
 
 function storedPlace(place: LoyaltyCardPlaceInput): LoyaltyCardPlace {

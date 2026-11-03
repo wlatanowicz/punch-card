@@ -116,5 +116,26 @@ describe("loyalty cards on device", () => {
     expect(view.getByText("This card is no longer on this device.")).toBeTruthy();
     expect(fetchAuthConfig).not.toHaveBeenCalled();
     expect(loadMe).not.toHaveBeenCalled();
+
+    fireEvent.press(view.getByTestId("card-back"));
+
+    expect(await view.findByTestId("cards-empty")).toBeTruthy();
+  });
+
+  it("returns to the card list after deleting a directly opened card", async () => {
+    const card = await addCard({
+      name: "Corner Cafe",
+      symbology: "qr",
+      payload: "cafe-1",
+    });
+    const view = await renderCustomerRoutes(`/card/${card.id}`);
+
+    expect(await view.findByTestId("card-payload")).toBeTruthy();
+    fireEvent.press(view.getByTestId("card-delete"));
+
+    expect(await view.findByTestId("cards-empty")).toBeTruthy();
+    expect(view.queryByTestId(`card-row-${card.id}`)).toBeNull();
+    expect(fetchAuthConfig).not.toHaveBeenCalled();
+    expect(loadMe).not.toHaveBeenCalled();
   });
 });
