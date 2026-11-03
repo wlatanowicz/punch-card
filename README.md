@@ -4,6 +4,10 @@ Bootstrapped from [micro-saas-template](https://github.com/wlatanowicz/micro-saa
 
 Product notes: [docs/IDEAS.md](docs/IDEAS.md).
 
+## Backlog
+
+We track work in [GitHub Issues](https://github.com/wlatanowicz/punch-card/issues). New items should use Summary, Why, and Scope sections. See `AGENTS.md` for agent workflow and commit conventions.
+
 ## Layout
 
 - `backend/` — Serverless stack, FastAPI app, Alembic migrations
