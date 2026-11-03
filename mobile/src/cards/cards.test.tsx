@@ -92,8 +92,10 @@ describe("loyalty cards on device", () => {
     fireEvent.press(await view.findByTestId(`card-row-${card.id}`));
 
     expect(await view.findByTestId("card-detail")).toBeTruthy();
-    expect(view.getByTestId("card-symbology").props.children).toBe("qr");
-    expect(view.getByTestId("card-payload").props.children).toBe("cafe-1");
+    expect(view.getByText("Corner Cafe")).toBeTruthy();
+    expect(view.getByTestId("card-code").props.accessible).toBe(true);
+    expect(view.getByTestId("card-code").props.accessibilityLabel).toBe("cafe-1");
+    expect(view.queryByTestId("card-payload")).toBeNull();
     expect(view.getByText("Market")).toBeTruthy();
     expect(view.getByText("Used here")).toBeTruthy();
     expect(view.getByText("2026-04-02 15:30")).toBeTruthy();
@@ -122,6 +124,23 @@ describe("loyalty cards on device", () => {
     expect(await view.findByTestId("cards-empty")).toBeTruthy();
   });
 
+  it("shows the payload when the symbology cannot be rendered", async () => {
+    const card = await addCard({
+      name: "Old Shop",
+      symbology: "pdf417",
+      payload: "typed-by-hand",
+    });
+    const view = await renderCustomerRoutes(`/card/${card.id}`);
+
+    expect(await view.findByTestId("card-code-error")).toBeTruthy();
+    expect(view.getByText("This code cannot be displayed.")).toBeTruthy();
+    expect(view.getByText("Old Shop")).toBeTruthy();
+    expect(view.getByTestId("card-payload").props.children).toBe("typed-by-hand");
+    expect(view.queryByTestId("card-code")).toBeNull();
+    expect(fetchAuthConfig).not.toHaveBeenCalled();
+    expect(loadMe).not.toHaveBeenCalled();
+  });
+
   it("returns to the card list after deleting a directly opened card", async () => {
     const card = await addCard({
       name: "Corner Cafe",
@@ -130,7 +149,7 @@ describe("loyalty cards on device", () => {
     });
     const view = await renderCustomerRoutes(`/card/${card.id}`);
 
-    expect(await view.findByTestId("card-payload")).toBeTruthy();
+    expect(await view.findByTestId("card-code")).toBeTruthy();
     fireEvent.press(view.getByTestId("card-delete"));
 
     expect(await view.findByTestId("cards-empty")).toBeTruthy();

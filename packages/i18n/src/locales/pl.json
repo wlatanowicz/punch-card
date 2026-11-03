@@ -97,6 +97,7 @@
     "delete": "Usuń kartę",
     "symbology": "Typ kodu",
     "payload": "Kod",
+    "renderError": "Tego kodu nie można wyświetlić.",
     "places": "Miejsca",
     "usedHere": "Użyto tutaj",
     "notFound": "Tej karty nie ma już na tym urządzeniu."

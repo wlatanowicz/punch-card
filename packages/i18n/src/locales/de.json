@@ -97,6 +97,7 @@
     "delete": "Karte löschen",
     "symbology": "Codetyp",
     "payload": "Code",
+    "renderError": "Dieser Code kann nicht angezeigt werden.",
     "places": "Orte",
     "usedHere": "Hier verwendet",
     "notFound": "Diese Karte ist auf diesem Gerät nicht mehr vorhanden."
