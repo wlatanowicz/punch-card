@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fireEvent, renderRouter, waitFor } from "expo-router/testing-library";
 
 import RootLayout from "../app/_layout";
@@ -52,6 +53,7 @@ async function renderCustomerTabs(initialUrl = "/") {
 
 describe("customer tabs", () => {
   beforeEach(async () => {
+    await AsyncStorage.clear();
     process.env.EXPO_PUBLIC_API_BASE_URL = "http://127.0.0.1:8000";
     fetchAuthConfig.mockReset();
     loadMe.mockReset();
@@ -70,7 +72,7 @@ describe("customer tabs", () => {
     const view = await renderCustomerTabs();
 
     expect(view.getByTestId("cards-screen")).toBeTruthy();
-    expect(view.getByText("No loyalty cards yet.")).toBeTruthy();
+    expect(await view.findByText("No loyalty cards yet.")).toBeTruthy();
     expect(view.queryByText("Database configured:")).toBeNull();
     expect(view.queryByText("No items yet.")).toBeNull();
 

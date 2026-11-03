@@ -92,7 +92,14 @@
   },
   "cards": {
     "title": "Karten",
-    "empty": "Noch keine Treuekarten."
+    "empty": "Noch keine Treuekarten.",
+    "back": "Zurück",
+    "delete": "Karte löschen",
+    "symbology": "Codetyp",
+    "payload": "Code",
+    "places": "Orte",
+    "usedHere": "Hier verwendet",
+    "notFound": "Diese Karte ist auf diesem Gerät nicht mehr vorhanden."
   },
   "stamp": {
     "title": "Stempel-QR",
