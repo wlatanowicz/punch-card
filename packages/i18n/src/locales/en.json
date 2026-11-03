@@ -100,7 +100,15 @@
     "renderError": "This code cannot be displayed.",
     "places": "Places",
     "usedHere": "Used here",
-    "notFound": "This card is no longer on this device."
+    "notFound": "This card is no longer on this device.",
+    "scan": "Scan a card",
+    "scanHint": "Point the camera at the barcode or QR code.",
+    "cameraNeeded": "Punch Card needs the camera to read the code on a loyalty card.",
+    "allowCamera": "Allow camera",
+    "permissionDenied": "Camera access is off. Punch Card needs the camera to read a loyalty card.",
+    "nameTitle": "Name this card",
+    "nameLabel": "Card name",
+    "save": "Save card"
   },
   "stamp": {
     "title": "Stamp QR",

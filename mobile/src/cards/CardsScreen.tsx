@@ -5,6 +5,7 @@ import { Pressable, ScrollView, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAppTheme } from "../theme";
+import { AppButton } from "../ui";
 import type { LoyaltyCard } from "./loyaltyCard";
 import { listCards } from "./loyaltyCards";
 
@@ -36,6 +37,7 @@ export function CardsScreen() {
     >
       <ScrollView contentContainerStyle={{ padding: theme.pad, gap: 12 }}>
         <Text style={{ color: theme.text, fontSize: 28, fontWeight: "700" }}>{t("cards.title")}</Text>
+        <AppButton label={t("cards.scan")} onPress={() => router.push("/scan")} testID="cards-scan" />
         {cards !== null && cards.length === 0 ? (
           <Text testID="cards-empty" style={{ color: theme.dimmed, fontSize: 16 }}>
             {t("cards.empty")}
