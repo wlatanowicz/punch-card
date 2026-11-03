@@ -92,7 +92,7 @@ export function SettingsScreen() {
 
         {configError ? <ErrorBanner message={configError} /> : null}
 
-        {!configError && currentUser ? (
+        {currentUser ? (
           <View testID="settings-signed-in" style={{ alignItems: "flex-start", gap: 6 }}>
             <Text style={{ color: theme.text, fontWeight: "600" }}>{currentUser.email}</Text>
             <View

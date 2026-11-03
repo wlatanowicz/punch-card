@@ -100,4 +100,22 @@ describe("customer tabs", () => {
       expect(view.queryByText("Sign in")).toBeNull();
     });
   });
+
+  it("keeps the signed-in account visible when a later refresh fails", async () => {
+    fetchAuthConfig
+      .mockResolvedValueOnce({ password: true, google: false, facebook: false })
+      .mockRejectedValueOnce(new Error("network down"));
+    readAccessToken.mockResolvedValue("token");
+    loadMe.mockResolvedValue({ ok: true, data: signedInUser });
+
+    const view = await renderCustomerTabs("/settings");
+
+    expect(await view.findByText("ada@example.com")).toBeTruthy();
+
+    await i18n.changeLanguage("pl");
+
+    expect(await view.findByText("network down")).toBeTruthy();
+    expect(view.getByText("ada@example.com")).toBeTruthy();
+    expect(view.getByText("Wyloguj")).toBeTruthy();
+  });
 });
