@@ -2,7 +2,8 @@
 name: work-on-issue
 description: >-
   Implements a GitHub issue on its own branch, commits there, and opens a
-  pull request with Copilot as reviewer. Always fetch and branch from the latest origin/main before
+  pull request with Copilot as reviewer. When the mobile app UI changes, capture a
+  simulator screenshot and upload it on that pull request. Always fetch and branch from the latest origin/main before
   creating that branch. Before every commit, run the full CI check set and
   do not commit or push while anything fails. Use when the user asks to work
   on, implement, fix, or build a GitHub issue. Do not use for only reading
@@ -51,15 +52,19 @@ Asking to work on an issue authorizes a branch, commits on that branch, a push, 
 
    After `gh pr create`, confirm `gh pr view <pr> --json closingIssuesReferences` includes that issue number. If it is missing, `gh pr edit` the body to add the line and check again.
 
-4. If the change is visible in the UI, attach a screenshot of that screen in the pull request description. Skip this when there is nothing to show, a screenshot cannot be captured, or `gh` has no `--attach` flag (added in 2.99.0). Do not block the pull request on a screenshot, and do not commit the image.
+4. When the change is visible in the mobile app, capture that screen on a local simulator and upload the image on the pull request. Do this for every mobile UI change. Do not commit the image. Do not use an EAS Simulator session. This needs GitHub CLI 2.99.0 or newer (`--attach`).
 
-   Put the image in the body before the `Closes #<number>` line, and upload it with the same `gh` command:
+   Capture it with **expo-mobile-verify** when those tools are connected. When they are not, start the app with `make run-mobile`, open the iOS Simulator or Android emulator from that Expo CLI, show the changed screen, and run `xcrun simctl io booted screenshot screenshot.png` (or the emulator screenshot command). Seed on-device data when the screen only appears after records exist.
+
+   Put the image in the body before the `Closes #<number>` line:
 
    ```
    gh pr create --reviewer "@copilot" --body-file body.md --attach './screenshot.png#What changed on screen'
    ```
 
-   In `body.md`, reference the same path so `gh` rewrites it to the uploaded URL: `![What changed on screen](./screenshot.png)`. If the pull request already exists, use `gh pr edit <pr> --attach './screenshot.png#What changed on screen'`. Keep `Closes #<number>` on its own line after the image.
+   In `body.md`, reference the same path so `gh` rewrites it to the uploaded URL: `![What changed on screen](./screenshot.png)`. If the pull request already exists, rewrite the body the same way and upload with `gh pr edit <pr> --body-file body.md --attach './screenshot.png#What changed on screen'`.
+
+   A web-only visible change still gets a browser screenshot by the same upload step. Skip a screenshot only when the change has no visible UI.
 
 5. After the pull request is open, follow **copilot-pr-review**. That skill waits for Copilot's review and addresses the comments. If this pull request already existed, it also adds `@copilot` as a reviewer.
 

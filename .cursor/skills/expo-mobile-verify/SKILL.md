@@ -27,6 +27,10 @@ Use the local tools, with `projectRoot` set to the `mobile/` directory:
 
 Confirm the behavior that changed. A screenshot of an unrelated screen is not a check.
 
-## When local tools are unavailable
+## Pull request image
 
-If Expo login, the simulator, or the local MCP tools are missing, say that the running app was not verified. Do not claim the UI was checked. Do not call `simulator_start` or other EAS Simulator tools to fill the gap. Run `npm test --workspace=mobile` for the unit tests instead.
+Save the screenshot of the changed screen. **work-on-issue** uploads that file on the pull request for every mobile UI change. Do not commit the image.
+
+## When Expo MCP is unavailable
+
+Say that Expo MCP did not check the running app. Do not call `simulator_start` or other EAS Simulator tools. Still open the local simulator, capture the changed screen with `xcrun simctl io booted screenshot screenshot.png` (or the emulator screenshot command), and upload it on the pull request. Run `npm test --workspace=mobile` as well.
