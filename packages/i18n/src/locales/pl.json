@@ -100,7 +100,16 @@
     "renderError": "Tego kodu nie można wyświetlić.",
     "places": "Miejsca",
     "usedHere": "Użyto tutaj",
-    "notFound": "Tej karty nie ma już na tym urządzeniu."
+    "notFound": "Tej karty nie ma już na tym urządzeniu.",
+    "scan": "Skanuj kartę",
+    "scanHint": "Skieruj aparat na kod kreskowy lub kod QR.",
+    "cameraNeeded": "Punch Card potrzebuje aparatu, aby odczytać kod na karcie lojalnościowej.",
+    "allowCamera": "Zezwól na aparat",
+    "permissionDenied": "Dostęp do aparatu jest wyłączony. Punch Card potrzebuje aparatu, aby odczytać kartę lojalnościową.",
+    "nameTitle": "Nazwij tę kartę",
+    "nameLabel": "Nazwa karty",
+    "save": "Zapisz kartę",
+    "saveError": "Nie udało się zapisać karty. Spróbuj ponownie."
   },
   "stamp": {
     "title": "Kod QR pieczątki",
